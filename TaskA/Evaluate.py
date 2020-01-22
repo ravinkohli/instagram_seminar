@@ -31,8 +31,8 @@ def main():
     :return:
     """
     data_directory = ""
-    x_valid = np.load(os.path.join(data_directory, "x_valid.npy"))
-    y_valid = np.load(os.path.join(data_directory, "y_valid.npy"))
+    x_test = np.load(os.path.join(data_directory, "x_test.npy"))
+    y_test = np.load(os.path.join(data_directory, "y_test.npy"))
 
     ####################################################################################################################
     # do some pre processing
@@ -55,15 +55,14 @@ def main():
         path = dirs[index]
     else:
         path = args.path
-    name = path
     path = os.path.join('./models', path)
-    model = create_model(x_valid.shape[1:])
+    model = create_model(x_test.shape[1:])
     model.load_weights(path)
     
-    plot_model(model, to_file=os.path.join('./plots', f'{name}.png'))
+    # plot_model(model, to_file=os.path.join('./plots', f'{name}.png'))
 
     # create the predictions
-    scores = model.evaluate(x_valid, y_valid, verbose=2, batch_size=32)
+    scores = model.evaluate(x_test, y_test, verbose=2, batch_size=32)
 
     # get some info
     print("mae:", scores[1])

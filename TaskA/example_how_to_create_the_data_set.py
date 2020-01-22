@@ -52,14 +52,14 @@ def reshape_and_pad(image: np.ndarray, target_size: Union[List[int], Tuple[int]]
     return new_image
 
 
-def main():
+def main(data_type="train"):
     print("starting to create the data set for the instagram images")
     # shape of the output images you can scale this if you want
     target_shape = [128, 128]
     # the columns that will be predicted
     target_columns = ["image_Advertisement", "image_Body_Visible", "image_Human_Focus", "image_Nudity"]
     # the directory where the images are stored
-    input_data_directory = "data/images_train/"
+    input_data_directory = f"data/images_{data_type}/"
     # get the image files in the directory
     input_files = sorted([f for f in listdir(input_data_directory) if isfile(join(input_data_directory, f))])
     input_files = np.array(input_files)
@@ -82,7 +82,7 @@ def main():
     image_array = np.ndarray(shape=array_shape, dtype=np.uint8)
 
     # array for the targets
-    majority_df = pd.read_csv("data/stud_df_train.csv")
+    majority_df = pd.read_csv(f"data/stud_df_{data_type}.csv")
 
 
     targets = np.zeros((n_images, 4))
@@ -102,23 +102,29 @@ def main():
         part = majority_df[majority_df["image_path"] == input_file]
         target_row = part[target_columns].values[0]
         targets[index] = target_row
-
-    # save the created image array
-    np.save("x_all.npy", image_array)
-    np.save("x_train.npy", image_array[:test_split_point])
-    np.save("x_valid.npy", image_array[test_split_point:])
-    np.save("names_for_x.npy", input_files)
-    np.save("y_all.npy", targets)
-    np.save("y_train.npy", targets[:test_split_point])
-    np.save("y_valid.npy", targets[test_split_point:])
-
-    # read the files again to see if they were created correctly
-    output_files = ["x_all.npy", "x_train.npy", "x_valid.npy", "names_for_x.npy", "y_all.npy", "y_train.npy",
-                    "y_valid.npy"]
+    if data_type == 'train':
+        # save the created image array
+        np.save("x_all.npy", image_array)
+        np.save("x_train.npy", image_array[:test_split_point])
+        np.save("x_valid.npy", image_array[test_split_point:])
+        np.save("names_for_x.npy", input_files)
+        np.save("y_all.npy", targets)
+        np.save("y_train.npy", targets[:test_split_point])
+        np.save("y_valid.npy", targets[test_split_point:])
+        # read the files again to see if they were created correctly
+        output_files = ["x_all.npy", "x_train.npy", "x_valid.npy", "names_for_x.npy", "y_all.npy", "y_train.npy",
+                        "y_valid.npy"]
+    elif data_type == 'test':
+        np.save("x_test.npy", image_array)
+        np.save("names_for_x_test.npy", input_files)
+        np.save("y_test.npy", targets)
+        # read the files again to see if they were created correctly
+        output_files = ["x_test.npy", "names_for_x_test.npy", "y_test.npy"]
+    
     for f in output_files:
         a = np.load(f)
         print("reloaded {} shape {}".format(f, a.shape))
 
 
 if __name__ == '__main__':
-    main()
+    main(data_type='test')
