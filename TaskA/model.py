@@ -6,6 +6,7 @@ from keras.optimizers import RMSprop, Adam, Adadelta
 from keras import backend as K
 from keras import regularizers
 from config import get_config
+
 def create_model(image_shape):
     config = get_config()
     kernel_size = config['kernel_size']

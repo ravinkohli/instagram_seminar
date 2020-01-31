@@ -58,7 +58,7 @@ def main():
     path = os.path.join('./models', path)
     model = create_model(x_test.shape[1:])
     model.load_weights(path)
-    
+      
     # plot_model(model, to_file=os.path.join('./plots', f'{name}.png'))
 
     # create the predictions
